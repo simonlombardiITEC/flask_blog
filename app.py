@@ -14,33 +14,27 @@ class Usuario(db.Model):
     __tablename__ = 'usuario'
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(100), nullable=False)
-    correo = db.Column(db.String(100), nullable=False)
-    contraseña = db.Column(db.String(100), nullable=False)
-
-    def __str__(self):
-        return self.nombre
+    email = db.Column(db.String(100), nullable=False)
+    clave = db.Column(db.String(100), nullable=False)
     
 
-class Post(db.Model):
+class Posteo(db.Model):
     __tablename__ = 'post'
     id = db.Column(db.Integer, primary_key=True)
     titulo = db.Column(db.String(100), nullable=False)
     contenido = db.Column(db.String(500), nullable=False)
-    fecha_creacion = db.Column(db.Date, nullable=False)
+    fecha = db.Column(db.Date, nullable=False)
     autor_id = db.Column(db.Integer, ForeignKey('usuario.id'), nullable=False)
-
-    def __str__(self):
-        return self.nombre
+    categoria_id = db.Column(db.Integer, ForeignKey('categoria.id'), nullable=False)
 
 class Comentario(db.Model):
     __tablename__ = 'comentario'
     id = db.Column(db.Integer, primary_key=True)
-    texto_comentario = db.Column(db.String(500), nullable=False)
-    fecha_creacion = db.Column(db.String(100), nullable=False)
+    texto = db.Column(db.String(500), nullable=False)
+    fecha = db.Column(db.String(100), nullable=False)
     autor_id = db.Column(db.Integer, ForeignKey('usuario.id'), nullable=False)
     post_id = db.Column(db.Integer, ForeignKey('post.id'), nullable=False)
 
-#Falta agregar al migrate
 class Categoria(db.Model):
     __tablename__ = 'categoria'
     id = db.Column(db.Integer, primary_key=True)
