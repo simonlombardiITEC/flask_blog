@@ -2,5 +2,35 @@
 {% block title %}Inicio{% endblock%}
 
 {% block body %}
-<h2>Usuario: {{usuario[0].nombre}}</h2>
-{%endblock%}
+<h2>Hola: {{usuario}}</h2>
+<div id="postear" class="container">
+    <h2>Postear</h2>
+    <form action="/crear_post" method="post">
+        <div> <input type="text" name="usuario" id="usuario" placeholder="" value="{{usuario}}" style="display:
+            none;"></div>
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="titulo" placeholder="Título">
+            <label for="titulo">Titulo</label>
+        </div>
+
+        <div class="form-floating">
+            <textarea class="form-control" placeholder="Escriba su contenido" id="contenido"
+                style="height: 100px"></textarea>
+            <label for="contenido">Contenido</label>
+        </div>
+
+        <div class="form-floating">
+            <select class="form-select" id="categoria" aria-label="Categoria">
+                <option selected>Elija su categoria</option>
+                {% for categoria in categorias %}
+                <option value="{{categoria.id}}">{{categoria.categoria}}</option>
+                {% endfor %}
+            </select>
+            <label for="categoria">Elija su categoria</label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Enviar</button>
+    </form>
+</div>
+
+{% endblock %}
