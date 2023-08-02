@@ -59,7 +59,7 @@ def iniciar_sesion():
     if request.method == 'POST':
         email_usuario = request.form['email']
         clave_usuario = request.form['clave']
-        usuarios = db.session.query(Usuario).filter_by(email = email_usuario,clave = clave_usuario).all()
+        usuarios = db.session.query(Usuario).filter_by(correo = email_usuario,clave = clave_usuario).all()
         if usuarios== []:
             return (redirect(url_for('index')))
         else: 
