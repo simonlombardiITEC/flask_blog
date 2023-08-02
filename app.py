@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -28,6 +29,7 @@ class Post(db.Model):
     contenido = db.Column(db.String(500), nullable=False)
     fecha_creacion = db.Column(db.Date, nullable=False)
     autor_id = db.Column(db.Integer, ForeignKey('usuario.id'), nullable=False)
+    categoria_id = db.Column(db.Integer, ForeignKey('categoria.id'), nullable=False)
 
     def __str__(self):
         return self.nombre
@@ -57,12 +59,11 @@ def iniciar_sesion():
     if request.method == 'POST':
         email_usuario = request.form['email']
         clave_usuario = request.form['clave']
-        usuarios = db.session.query(Usuario).all()
-        for usuario in usuarios:
-            if usuario.correo == email_usuario:
-                if usuario.clave == clave_usuario:
-                    return(redirect(url_for('inicio')))
-        return (redirect(url_for('index')))
+        usuarios = db.session.query(Usuario).filter_by(email = email_usuario,clave = clave_usuario).all()
+        if usuarios== []:
+            return (redirect(url_for('index')))
+        else: 
+            return render_template('inicio.html', usuario = usuarios)
 
 @app.route('/registrarse', methods=['POST'])
 def registrarse():
@@ -82,3 +83,19 @@ def registrarse():
 @app.route('/inicio')
 def inicio():    
     return render_template('inicio.html')
+
+@app.route('/crear_post')
+def crear_post():
+    if request.method=='POST':
+        usuario_id = request.form['usuario']
+        titulo = request.form['titulo']
+        contenido = request.form['contenido']
+        fecha = datetime.now()
+        categoria_id = request.form['categoria']
+        #Instancia
+        nuevo_post = Post(titulo = titulo, contenido = contenido, fecha_cracion = fecha, autor_id = usuario_id, categoria_id = categoria_id)
+        #Agregar Instancia
+        db.session.add(nuevo_post)
+        #Guardar Instancia
+        db.session.commit()
+        return render_template('inicio.html', usuario = db.session.query(Usuario).filter_by(id=usuario_id))
