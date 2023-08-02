@@ -15,7 +15,7 @@ class Usuario(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(100), nullable=False)
     correo = db.Column(db.String(100), nullable=False)
-    contraseña = db.Column(db.String(100), nullable=False)
+    clave = db.Column(db.String(100), nullable=False)
 
     def __str__(self):
         return self.nombre
@@ -40,7 +40,6 @@ class Comentario(db.Model):
     autor_id = db.Column(db.Integer, ForeignKey('usuario.id'), nullable=False)
     post_id = db.Column(db.Integer, ForeignKey('post.id'), nullable=False)
 
-#Falta agregar al migrate
 class Categoria(db.Model):
     __tablename__ = 'categoria'
     id = db.Column(db.Integer, primary_key=True)
@@ -57,21 +56,29 @@ def index():
 def iniciar_sesion():
     if request.method == 'POST':
         email_usuario = request.form['email']
-        contraseña_usuario = request.form['contraseña']
-        
-    return(redirect(url_for('inicio')))
+        clave_usuario = request.form['clave']
+        usuarios = db.session.query(Usuario).all()
+        for usuario in usuarios:
+            if usuario.correo == email_usuario:
+                if usuario.clave == clave_usuario:
+                    return(redirect(url_for('inicio')))
+        return (redirect(url_for('index')))
 
 @app.route('/registrarse', methods=['POST'])
 def registrarse():
     if request.method == 'POST':
         nombre_usuario = request.form['nombre']
         email_usuario = request.form['email']
-        contraseña_usuario = request.form['contraseña']
+        clave_usuario = request.form['clave']
         
         #Instancia
-        nuevo_usuario = Usuario(nombre = nombre_usuario, correo = email_usuario, contraseña = contraseña_usuario)
+        nuevo_usuario = Usuario(nombre = nombre_usuario, correo = email_usuario, clave = clave_usuario)
         #Agregar Instancia
         db.session.add(nuevo_usuario)
         #Guardar Instancia 
         db.session.commit()
     return(redirect(url_for('index')))
+
+@app.route('/inicio')
+def inicio():    
+    return render_template('inicio.html')
