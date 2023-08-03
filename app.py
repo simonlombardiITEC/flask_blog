@@ -31,8 +31,19 @@ class Post(db.Model):
     autor_id = db.Column(db.Integer, ForeignKey('usuario.id'), nullable=False)
     categoria_id = db.Column(db.Integer, ForeignKey('categoria.id'), nullable=False)
 
-    def __str__(self):
-        return self.nombre
+    def get_nombre(self):
+        usuario = db.session.query(Usuario).filter_by(id = self.autor_id).all()
+        usuario_nombre = usuario[0].nombre
+        return (
+            usuario_nombre
+    )
+    
+    def get_categoria(self):
+        categoria = db.session.query(Categoria).filter_by(id = self.categoria_id).all()
+        nombre_categoria = categoria[0].categoria
+        return (
+            nombre_categoria
+    )
 
 class Comentario(db.Model):
     __tablename__ = 'comentario'
@@ -46,7 +57,21 @@ class Categoria(db.Model):
     __tablename__ = 'categoria'
     id = db.Column(db.Integer, primary_key=True)
     categoria = db.Column(db.String(100), nullable=False)
+    
 
+@app.context_processor
+def inject_categorias():
+    categorias = db.session.query(Categoria).all()
+    return dict(
+        categorias = categorias
+    )
+
+@app.context_processor
+def inject_posts():
+    posts = db.session.query(Post).all()
+    return dict(
+        posts = posts
+    )
 
 @app.route('/')
 def index():
@@ -60,10 +85,12 @@ def iniciar_sesion():
         email_usuario = request.form['email']
         clave_usuario = request.form['clave']
         usuarios = db.session.query(Usuario).filter_by(correo = email_usuario,clave = clave_usuario).all()
+        usuario_id = usuarios[0].id
+        print(usuario_id)
         if usuarios== []:
-            return (redirect(url_for('index')))
+            return redirect(url_for('index'))
         else: 
-            return render_template('inicio.html', usuario = usuarios)
+            return redirect(url_for('inicio', usuario_id = usuario_id))
 
 @app.route('/registrarse', methods=['POST'])
 def registrarse():
@@ -81,21 +108,34 @@ def registrarse():
     return(redirect(url_for('index')))
 
 @app.route('/inicio')
-def inicio():    
-    return render_template('inicio.html')
+def inicio():
+    usuario_id = request.args['usuario_id']
+    usuario = db.session.query(Usuario).filter_by(id = usuario_id).all()
+    usuario_nombre = usuario[0].nombre
+    return render_template(
+        'inicio.html',
+        usuario_id = usuario_id,
+        usuario_nombre = usuario_nombre
+    )
 
-@app.route('/crear_post')
+@app.route('/crear_post', methods=['POST'])
 def crear_post():
     if request.method=='POST':
-        usuario_id = request.form['usuario']
-        titulo = request.form['titulo']
-        contenido = request.form['contenido']
-        fecha = datetime.now()
+        usuario_id = request.form['usuario_id']
+        
+        titulo = request.form['titulo']        
+        contenido = request.form['contenido']       
         categoria_id = request.form['categoria']
+
+        fecha = datetime.now()
+        
         #Instancia
-        nuevo_post = Post(titulo = titulo, contenido = contenido, fecha_cracion = fecha, autor_id = usuario_id, categoria_id = categoria_id)
+        nuevo_post = Post(titulo = titulo, contenido = contenido, fecha_creacion = fecha, autor_id = usuario_id, categoria_id = categoria_id)
         #Agregar Instancia
         db.session.add(nuevo_post)
         #Guardar Instancia
-        db.session.commit()
-        return render_template('inicio.html', usuario = db.session.query(Usuario).filter_by(id=usuario_id))
+        db.session.commit() 
+        return redirect(url_for('inicio', usuario_id = usuario_id))
+    
+    
+
