@@ -53,6 +53,13 @@ class Comentario(db.Model):
     autor_id = db.Column(db.Integer, ForeignKey('usuario.id'), nullable=False)
     post_id = db.Column(db.Integer, ForeignKey('post.id'), nullable=False)
 
+    def get_nombre(self):
+        usuario = db.session.query(Usuario).filter_by(id = self.autor_id).all()
+        usuario_nombre = usuario[0].nombre
+        return (
+            usuario_nombre
+            )
+
 class Categoria(db.Model):
     __tablename__ = 'categoria'
     id = db.Column(db.Integer, primary_key=True)
@@ -71,6 +78,13 @@ def inject_posts():
     posts = db.session.query(Post).all()
     return dict(
         posts = posts
+    )
+
+@app.context_processor
+def inject_comentarios():
+    comentarios = db.session.query(Comentario).all()
+    return dict(
+        comentarios = comentarios
     )
 
 @app.route('/')
@@ -137,5 +151,20 @@ def crear_post():
         db.session.commit() 
         return redirect(url_for('inicio', usuario_id = usuario_id))
     
-    
+
+@app.route('/crear_comentario', methods=['POST'])
+def crear_comentario():
+    if request.method=='POST':
+        contenido = request.form['contenido']       
+        fecha = datetime.now()
+        usuario_id = request.form['usuario_id']
+        post_id = request.form['post_id']
+        
+        #Instancia
+        nuevo_comentario = Comentario(texto_comentario = contenido, fecha_creacion = fecha, autor_id = usuario_id, post_id = post_id)
+        #Agregar Instancia
+        db.session.add(nuevo_comentario)
+        #Guardar Instancia
+        db.session.commit() 
+        return redirect(url_for('inicio', usuario_id = usuario_id))
 
