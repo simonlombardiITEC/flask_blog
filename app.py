@@ -60,10 +60,12 @@ def iniciar_sesion():
         email_usuario = request.form['email']
         clave_usuario = request.form['clave']
         usuarios = db.session.query(Usuario).filter_by(correo = email_usuario,clave = clave_usuario).all()
+        usuario_id = usuarios[0].id
+        print(usuario_id)
         if usuarios== []:
             return redirect(url_for('index'))
         else: 
-            return redirect(url_for('inicio', usuario = usuarios))
+            return redirect(url_for('inicio', usuario_id = usuario_id))
 
 @app.route('/registrarse', methods=['POST'])
 def registrarse():
@@ -82,21 +84,21 @@ def registrarse():
 
 @app.route('/inicio')
 def inicio():
-    usuario = request.args['usuario']
+    usuario_id = request.args['usuario_id']
+    usuario = db.session.query(Usuario).filter_by(id = usuario_id).all()
+    usuario_nombre = usuario[0].nombre
     categorias = db.session.query(Categoria).all()
     return render_template(
         'inicio.html',
         categorias = categorias,
-        usuario = usuario
-        )
+        usuario_id = usuario_id,
+        usuario_nombre = usuario_nombre
+    )
 
 @app.route('/crear_post', methods=['POST'])
 def crear_post():
     if request.method=='POST':
-        nombre = request.form['usuario']
-
-        usuario = db.session.query(Usuario).filter_by(nombre = nombre).all()
-        usuario_id = usuario[0].id
+        usuario_id = request.form['usuario_id']
         
         titulo = request.form['titulo']        
         contenido = request.form['contenido']       
@@ -110,5 +112,5 @@ def crear_post():
         db.session.add(nuevo_post)
         #Guardar Instancia
         db.session.commit() 
-        return redirect(url_for('inicio', usuario = usuario))
+        return redirect(url_for('inicio', usuario_id = usuario_id))
         
