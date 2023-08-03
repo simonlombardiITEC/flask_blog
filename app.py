@@ -83,7 +83,6 @@ def registrarse():
 @app.route('/inicio')
 def inicio():
     usuario = request.args['usuario']
-    print(usuario)
     categorias = db.session.query(Categoria).all()
     return render_template(
         'inicio.html',
@@ -95,17 +94,21 @@ def inicio():
 def crear_post():
     if request.method=='POST':
         nombre = request.form['usuario']
+
         usuario = db.session.query(Usuario).filter_by(nombre = nombre).all()
         usuario_id = usuario[0].id
-        titulo = request.form['titulo']
-        contenido = request.form['contenido']
-        fecha = datetime.now()
+        
+        titulo = request.form['titulo']        
+        contenido = request.form['contenido']       
         categoria_id = request.form['categoria']
 
+        fecha = datetime.now()
+        
         #Instancia
-        nuevo_post = Post(titulo = titulo, contenido = contenido, fecha_cracion = fecha, autor_id = usuario_id, categoria_id = categoria_id)
+        nuevo_post = Post(titulo = titulo, contenido = contenido, fecha_creacion = fecha, autor_id = usuario_id, categoria_id = categoria_id)
         #Agregar Instancia
         db.session.add(nuevo_post)
         #Guardar Instancia
-        db.session.commit()
-    return redirect(url_for('inicio.html', usuario = db.session.query(Usuario).filter_by(id=usuario_id)))
+        db.session.commit() 
+        return redirect(url_for('inicio', usuario = usuario))
+        
