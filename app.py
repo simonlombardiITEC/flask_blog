@@ -31,8 +31,19 @@ class Post(db.Model):
     autor_id = db.Column(db.Integer, ForeignKey('usuario.id'), nullable=False)
     categoria_id = db.Column(db.Integer, ForeignKey('categoria.id'), nullable=False)
 
-    def __str__(self):
-        return self.nombre
+    def get_nombre(self):
+        usuario = db.session.query(Usuario).filter_by(id = self.autor_id).all()
+        usuario_nombre = usuario[0].nombre
+        return (
+            usuario_nombre
+    )
+    
+    def get_categoria(self):
+        categoria = db.session.query(Categoria).filter_by(id = self.categoria_id).all()
+        nombre_categoria = categoria[0].categoria
+        return (
+            nombre_categoria
+    )
 
 class Comentario(db.Model):
     __tablename__ = 'comentario'
@@ -46,7 +57,7 @@ class Categoria(db.Model):
     __tablename__ = 'categoria'
     id = db.Column(db.Integer, primary_key=True)
     categoria = db.Column(db.String(100), nullable=False)
-
+    
 
 @app.context_processor
 def inject_categorias():
@@ -125,4 +136,6 @@ def crear_post():
         #Guardar Instancia
         db.session.commit() 
         return redirect(url_for('inicio', usuario_id = usuario_id))
-        
+    
+    
+
