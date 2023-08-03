@@ -48,6 +48,20 @@ class Categoria(db.Model):
     categoria = db.Column(db.String(100), nullable=False)
 
 
+@app.context_processor
+def inject_categorias():
+    categorias = db.session.query(Categoria).all()
+    return dict(
+        categorias = categorias
+    )
+
+@app.context_processor
+def inject_posts():
+    posts = db.session.query(Post).all()
+    return dict(
+        posts = posts
+    )
+
 @app.route('/')
 def index():
    return render_template(
@@ -87,10 +101,8 @@ def inicio():
     usuario_id = request.args['usuario_id']
     usuario = db.session.query(Usuario).filter_by(id = usuario_id).all()
     usuario_nombre = usuario[0].nombre
-    categorias = db.session.query(Categoria).all()
     return render_template(
         'inicio.html',
-        categorias = categorias,
         usuario_id = usuario_id,
         usuario_nombre = usuario_nombre
     )

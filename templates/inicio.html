@@ -2,6 +2,7 @@
 {% block title %}Inicio{% endblock%}
 
 {% block body %}
+
 <h2>Hola: {{usuario_nombre}}</h2>
 <div id="postear" class="container">
     <h2>Postear</h2>
@@ -33,4 +34,16 @@
     </form>
 </div>
 
+<div id='posteados' class="container">
+    {% for post in posts %}
+        <div id='post' class="container">
+            <h3> {{post.autor_id}}</h3>
+            <h4> {{post.fecha_creacion}}</h4>
+            <h4> {{post.categoria_id}}</h4>
+            <h3> {{post.titulo}}</h3>
+            <h4> {{post.contenido}}</h4>
+        </div>
+    {% endfor %}
+</div>
+  
 {% endblock %}
