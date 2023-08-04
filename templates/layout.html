@@ -11,17 +11,19 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-sm navbar-light bg-light">
+    <nav class="navbar navbar-expand-sm bg-body-tertiary" style="height: 80px;">
         <div class="container">
-            <a class="navbar-brand" href="#">Blog PY</a>
-            <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="collapse"
-                data-bs-target="#collapsibleNavId" aria-controls="collapsibleNavId" aria-expanded="false"
+            <a class="navbar-brand" href="#">Blog <span class="fs-bold">PY</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                 aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarSupportedContent">
+                <button class="btn btn-outline-primary" type="submit">Sign Out</button>
+            </div>
         </div>
     </nav>
-
     {% block body%}{% endblock %}
 
 
