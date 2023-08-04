@@ -37,17 +37,30 @@
             <h4> {{post.get_nombre()}}</h4>
             <h6 class="fw-light">Categoria: {{post.get_categoria()}}</h6>
                 {% if usuario_id == post.autor_id %}
-                    <form action="/borrar_post" method="post">
-                        <div> <input type="text" name="usuario_id" id="usuario" placeholder="" value="{{usuario_id}}"
-                            style="display:
-                            none;">
-                        </div>
-                        <div> <input type="text" name="post_id" id="post" placeholder="" value="{{post.id}}"
-                            style="display:
-                            none;">
-                        </div>
-                        <button type="submit" class="btn btn-danger my-2">Borrar</button>
-                    </form>
+                    <div class="row">
+                        <form class="col-1" action="/editar" method="post">
+                            <div> <input type="text" name="usuario_id" id="usuario" placeholder="" value="{{usuario_id}}"
+                                style="display:
+                                none;">
+                            </div>
+                            <div> <input type="text" name="post_id" id="post" placeholder="" value="{{post.id}}"
+                                style="display:
+                                none;">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Editar</button>
+                        </form>
+                        <form class="col-1" action="/borrar_post" method="post">
+                            <div> <input type="text" name="usuario_id" id="usuario" placeholder="" value="{{usuario_id}}"
+                                style="display:
+                                none;">
+                            </div>
+                            <div> <input type="text" name="post_id" id="post" placeholder="" value="{{post.id}}"
+                                style="display:
+                                none;">
+                            </div>
+                            <button type="submit" class="btn btn-danger">Borrar</button>
+                        </form>
+                    </div>
                 {% endif %}
         </div>
         <div class="card-body">

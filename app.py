@@ -186,3 +186,35 @@ def borrar_post():
         db.session.commit()
 
         return redirect(url_for('inicio', usuario_id = usuario_id))
+
+@app.route("/editar", methods=['POST'])
+def editar():
+    if request.method=='POST':
+        usuario_id = request.form['usuario_id']
+        post_id = request.form['post_id']
+        post = Post.query.get(post_id)
+        titulo = post.titulo
+        contenido = post.contenido
+        return render_template(
+            'editar.html',
+            titulo = titulo,
+            contenido = contenido,
+            usuario_id = usuario_id,
+            post_id = post_id,
+            logeado = True
+        )
+    
+@app.route("/editar_post", methods=['POST'])
+def editar_post():
+    if request.method=='POST':
+        usuario_id = request.form['usuario_id']
+        post_id = request.form['post_id']
+        titulo_editado = request.form['titulo_editado']
+        contenido_editado = request.form['contenido_editado']
+
+        post = Post.query.get(post_id)
+        post.titulo = titulo_editado
+        post.contenido = contenido_editado
+        db.session.commit()
+
+        return redirect(url_for('inicio', usuario_id = usuario_id))
