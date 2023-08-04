@@ -76,6 +76,7 @@ def inject_categorias():
 @app.context_processor
 def inject_posts():
     posts = db.session.query(Post).all()
+    posts = reversed(posts)
     return dict(
         posts = posts
     )
