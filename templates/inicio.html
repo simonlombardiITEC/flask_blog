@@ -36,17 +36,19 @@
         <div class="card-header">
             <h4> {{post.get_nombre()}}</h4>
             <h6 class="fw-light">Categoria: {{post.get_categoria()}}</h6>
-                <form action="/borrar_post">
-                    <div> <input type="text" name="usuario_id" id="usuario" placeholder="" value="{{usuario_id}}"
-                        style="display:
-                        none;">
-                    </div>
-                    <div> <input type="text" name="post_id_borrar" id="post_id" placeholder="" value="{{post.id}}"
-                        style="display:
-                        none;">
-                    </div>
-                    <button type="submit" class="btn btn-danger my-2">Borrar</button>
-                </form>
+                {% if usuario_id == post.autor_id %}
+                    <form action="/borrar_post" method="post">
+                        <div> <input type="text" name="usuario_id" id="usuario" placeholder="" value="{{usuario_id}}"
+                            style="display:
+                            none;">
+                        </div>
+                        <div> <input type="text" name="post_id" id="post" placeholder="" value="{{post.id}}"
+                            style="display:
+                            none;">
+                        </div>
+                        <button type="submit" class="btn btn-danger my-2">Borrar</button>
+                    </form>
+                {% endif %}
         </div>
         <div class="card-body">
             <h4 class="card-title">{{post.titulo}}</h4>
@@ -55,13 +57,13 @@
             <div id='comentarios' class="container">
                 <h4>Comentarios</h4>
                 {% for comentario in comentarios %}
-                {% if post.id == comentario.post_id %}
-                <div class="card m-3" style="background-color: #f9f9f9;">
-                    <h4 class="card-title p-2">{{comentario.get_nombre()}}</h4>
-                    <p class="card-text fw-light fs-4 px-3">{{comentario.texto_comentario}}</p>
-                    <h6 class="card-text fw-lighter text-end px-2">{{comentario.fecha_creacion}}</h6>
-                </div>
-                {% endif %}
+                    {% if post.id == comentario.post_id %}
+                        <div class="card m-3" style="background-color: #f9f9f9;">
+                            <h4 class="card-title p-2">{{comentario.get_nombre()}}</h4>
+                            <p class="card-text fw-light fs-4 px-3">{{comentario.texto_comentario}}</p>
+                            <h6 class="card-text fw-lighter text-end px-2">{{comentario.fecha_creacion}}</h6>
+                        </div>
+                    {% endif %}
                 {% endfor %}
             </div>
         </div>

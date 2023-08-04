@@ -126,6 +126,7 @@ def inicio():
     usuario_id = request.args['usuario_id']
     usuario = db.session.query(Usuario).filter_by(id = usuario_id).all()
     usuario_nombre = usuario[0].nombre
+    usuario_id = int(usuario_id)
     return render_template(
         'inicio.html',
         usuario_id = usuario_id,
@@ -169,12 +170,19 @@ def crear_comentario():
         db.session.commit() 
         return redirect(url_for('inicio', usuario_id = usuario_id))
 
-@app.route("/borrar_post")
+@app.route("/borrar_post", methods=['POST'])
 def borrar_post():
-    post_id = request.form['post_id']
-    post = Comentario.query.get(post_id)
-    db.session.delete(post)
-    db.session.commit()
-    usuario_id = request.form['usuario_id']
+    if request.method=='POST':
+        usuario_id = request.form['usuario_id']
+        
+        post_id = request.form['post_id']
 
-    return redirect(url_for('inicio', usuario_id = usuario_id))
+        comentarios = db.session.query(Comentario).filter_by(post_id = post_id).all()
+        for comentario in comentarios:
+            db.session.delete(comentario)
+            db.session.commit()
+        post = Post.query.get(post_id)
+        db.session.delete(post)
+        db.session.commit()
+
+        return redirect(url_for('inicio', usuario_id = usuario_id))
