@@ -19,9 +19,14 @@
                 aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            {% if logeado %}
             <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarSupportedContent">
-                <button class="btn btn-outline-primary" type="submit">Sign Out</button>
+                <h3 style="padding: 10px;">{{usuario_nombre}}</h3>
+                <form action="/">
+                    <button class="btn btn-outline-primary" type="submit">Sign Out</button>
+                </form>
             </div>
+            {% endif %}
         </div>
     </nav>
     {% block body%}{% endblock %}

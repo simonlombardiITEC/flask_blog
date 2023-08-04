@@ -99,12 +99,11 @@ def iniciar_sesion():
         email_usuario = request.form['email']
         clave_usuario = request.form['clave']
         usuarios = db.session.query(Usuario).filter_by(correo = email_usuario,clave = clave_usuario).all()
-        usuario_id = usuarios[0].id
-        print(usuario_id)
-        if usuarios== []:
-            return redirect(url_for('index'))
-        else: 
+        try:
+            usuario_id = usuarios[0].id
             return redirect(url_for('inicio', usuario_id = usuario_id))
+        except:
+            return redirect(url_for('index'))
 
 @app.route('/registrarse', methods=['POST'])
 def registrarse():
@@ -129,7 +128,8 @@ def inicio():
     return render_template(
         'inicio.html',
         usuario_id = usuario_id,
-        usuario_nombre = usuario_nombre
+        usuario_nombre = usuario_nombre,
+        logeado = True
     )
 
 @app.route('/crear_post', methods=['POST'])
