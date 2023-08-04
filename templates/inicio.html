@@ -36,6 +36,17 @@
         <div class="card-header">
             <h4> {{post.get_nombre()}}</h4>
             <h6 class="fw-light">Categoria: {{post.get_categoria()}}</h6>
+                <form action="/borrar_post">
+                    <div> <input type="text" name="usuario_id" id="usuario" placeholder="" value="{{usuario_id}}"
+                        style="display:
+                        none;">
+                    </div>
+                    <div> <input type="text" name="post_id_borrar" id="post_id" placeholder="" value="{{post.id}}"
+                        style="display:
+                        none;">
+                    </div>
+                    <button type="submit" class="btn btn-danger my-2">Borrar</button>
+                </form>
         </div>
         <div class="card-body">
             <h4 class="card-title">{{post.titulo}}</h4>

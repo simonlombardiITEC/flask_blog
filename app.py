@@ -169,3 +169,12 @@ def crear_comentario():
         db.session.commit() 
         return redirect(url_for('inicio', usuario_id = usuario_id))
 
+@app.route("/borrar_post")
+def borrar_post():
+    post_id = request.form['post_id']
+    post = Comentario.query.get(post_id)
+    db.session.delete(post)
+    db.session.commit()
+    usuario_id = request.form['usuario_id']
+
+    return redirect(url_for('inicio', usuario_id = usuario_id))
