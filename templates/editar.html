@@ -10,12 +10,12 @@
             none;"></div>
         <div class="col-12 mb-3">
             <p>Titulo:</p>
-            <input type="text" name="titulo_editado" class="form-control" id="titulo" value="{{titulo}}" placeholder="Título">
+            <input type="text" name="titulo_editado" class="form-control" id="titulo" value="{{titulo}}" placeholder="Título" required>
         </div>
         <div class="col-md-12 mb-3">
             <p>Contenido:</p>
             <textarea class="form-control" name="contenido_editado" placeholder="Edite su contenido"  id="contenido"
-                style="height: 100px">{{contenido}}</textarea>
+                style="height: 100px" required>{{contenido}}</textarea>
         </div>
         <button type="submit" class="btn btn-primary">Terminar Edición</button>
     </form>
