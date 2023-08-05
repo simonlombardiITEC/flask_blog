@@ -6,7 +6,8 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/flask_blog'  # = mysql+pymysql://usuario:contraseña@ip/nombre_db
+# = mysql+pymysql://usuario:contraseña@ip/nombre_db
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/flask_blog'
 
 db = SQLAlchemy(app=app)
 migrate = Migrate(app, db)
@@ -24,22 +25,40 @@ class Usuario(db.Model):
 
 class Post(db.Model):
     __tablename__ = 'post'
-    id = db.Column(db.Integer, primary_key=True)
-    titulo = db.Column(db.String(100), nullable=False)
-    contenido = db.Column(db.String(500), nullable=False)
-    fecha_creacion = db.Column(db.Date, nullable=False)
-    autor_id = db.Column(db.Integer, ForeignKey('usuario.id'), nullable=False)
-    categoria_id = db.Column(db.Integer, ForeignKey('categoria.id'), nullable=False)
+    id = db.Column(db.Integer,
+                   primary_key=True)
+    
+    titulo = db.Column(db.String(100),
+                       nullable=False)
+    
+    contenido = db.Column(db.String(500),
+                          nullable=False)
+    
+    fecha_creacion = db.Column(db.Date,
+                               nullable=False)
+    
+    autor_id = db.Column(db.Integer, 
+                         ForeignKey('usuario.id'), 
+                         nullable=False)
+    
+    categoria_id = db.Column(db.Integer, 
+                             ForeignKey('categoria.id'), 
+                             nullable=False)
 
     def get_nombre(self):
-        usuario = db.session.query(Usuario).filter_by(id = self.autor_id).all()
+        usuario = db.session.query(Usuario).filter_by(
+                  id = self.autor_id
+                  ).all()
         usuario_nombre = usuario[0].nombre
         return (
             usuario_nombre
     )
     
     def get_categoria(self):
-        categoria = db.session.query(Categoria).filter_by(id = self.categoria_id).all()
+        categoria = db.session.query(Categoria).filter_by(
+                                    id = self.categoria_id
+                                    ).all()
+        
         nombre_categoria = categoria[0].categoria
         return (
             nombre_categoria
@@ -47,14 +66,27 @@ class Post(db.Model):
 
 class Comentario(db.Model):
     __tablename__ = 'comentario'
-    id = db.Column(db.Integer, primary_key=True)
-    texto_comentario = db.Column(db.String(500), nullable=False)
-    fecha_creacion = db.Column(db.String(100), nullable=False)
-    autor_id = db.Column(db.Integer, ForeignKey('usuario.id'), nullable=False)
-    post_id = db.Column(db.Integer, ForeignKey('post.id'), nullable=False)
+    id = db.Column(db.Integer,
+                   primary_key=True)
+    
+    texto_comentario = db.Column(db.String(500), 
+                                 nullable=False)
+    
+    fecha_creacion = db.Column(db.String(100), 
+                               nullable=False)
+    
+    autor_id = db.Column(db.Integer, 
+                         ForeignKey('usuario.id'), 
+                         nullable=False)
+    
+    post_id = db.Column(db.Integer, 
+                        ForeignKey('post.id'), 
+                        nullable=False)
 
     def get_nombre(self):
-        usuario = db.session.query(Usuario).filter_by(id = self.autor_id).all()
+        usuario = db.session.query(Usuario).filter_by(
+                  id = self.autor_id
+                  ).all()
         usuario_nombre = usuario[0].nombre
         return (
             usuario_nombre
@@ -99,7 +131,9 @@ def iniciar_sesion():
     if request.method == 'POST':
         email_usuario = request.form['email']
         clave_usuario = request.form['clave']
-        usuarios = db.session.query(Usuario).filter_by(correo = email_usuario,clave = clave_usuario).all()
+        usuarios = db.session.query(Usuario).filter_by(
+                    correo = email_usuario,clave = clave_usuario
+                    ).all()
         try:
             usuario_id = usuarios[0].id
             return redirect(url_for('inicio', usuario_id = usuario_id))
@@ -114,7 +148,9 @@ def registrarse():
         clave_usuario = request.form['clave']
         
         #Instancia
-        nuevo_usuario = Usuario(nombre = nombre_usuario, correo = email_usuario, clave = clave_usuario)
+        nuevo_usuario = Usuario(nombre = nombre_usuario, 
+                                correo = email_usuario,
+                                clave = clave_usuario)
         #Agregar Instancia
         db.session.add(nuevo_usuario)
         #Guardar Instancia 
@@ -124,9 +160,12 @@ def registrarse():
 @app.route('/inicio')
 def inicio():
     usuario_id = request.args['usuario_id']
-    usuario = db.session.query(Usuario).filter_by(id = usuario_id).all()
-    usuario_nombre = usuario[0].nombre
     usuario_id = int(usuario_id)
+    usuario = db.session.query(Usuario).filter_by(
+              id = usuario_id
+              ).all()
+    
+    usuario_nombre = usuario[0].nombre
     return render_template(
         'inicio.html',
         usuario_id = usuario_id,
@@ -146,7 +185,11 @@ def crear_post():
         fecha = datetime.now()
         
         #Instancia
-        nuevo_post = Post(titulo = titulo, contenido = contenido, fecha_creacion = fecha, autor_id = usuario_id, categoria_id = categoria_id)
+        nuevo_post = Post(titulo = titulo, 
+                          contenido = contenido, 
+                          fecha_creacion = fecha, 
+                          autor_id = usuario_id, 
+                          categoria_id = categoria_id)
         #Agregar Instancia
         db.session.add(nuevo_post)
         #Guardar Instancia
@@ -163,7 +206,10 @@ def crear_comentario():
         post_id = request.form['post_id']
         
         #Instancia
-        nuevo_comentario = Comentario(texto_comentario = contenido, fecha_creacion = fecha, autor_id = usuario_id, post_id = post_id)
+        nuevo_comentario = Comentario(texto_comentario = contenido,
+                                      fecha_creacion = fecha, 
+                                      autor_id = usuario_id, 
+                                      post_id = post_id)
         #Agregar Instancia
         db.session.add(nuevo_comentario)
         #Guardar Instancia
@@ -177,7 +223,9 @@ def borrar_post():
         
         post_id = request.form['post_id']
 
-        comentarios = db.session.query(Comentario).filter_by(post_id = post_id).all()
+        comentarios = db.session.query(Comentario).filter_by(
+                      post_id = post_id
+                      ).all()
         for comentario in comentarios:
             db.session.delete(comentario)
             db.session.commit()
@@ -217,4 +265,4 @@ def editar_post():
         post.contenido = contenido_editado
         db.session.commit()
 
-        return redirect(url_for('inicio', usuario_id = usuario_id))
+    return redirect(url_for('inicio', usuario_id = usuario_id))
